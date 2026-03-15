@@ -1,0 +1,237 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Vane Munchkin Transaction</title>
+
+<style>
+body{
+margin:0;
+background:#1c1c1c;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:monospace;
+}
+
+canvas{
+background:#e9e2cf;
+border:6px solid #333;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+image-rendering:pixelated;
+}
+</style>
+
+</head>
+
+<body>
+
+<canvas id="scene" width="700" height="350"></canvas>
+
+<audio id="bgMusic" loop>
+<source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+const canvas = document.getElementById("scene")
+const ctx = canvas.getContext("2d")
+
+// MUSIC
+const music = document.getElementById("bgMusic")
+document.addEventListener("click", () => {
+music.play()
+})
+
+let boy={x:150,y:200}
+let girl={x:550,y:200}
+
+let chocolate=null
+let state="walk"
+
+// LOAD PHOTOS
+const boyPhoto = new Image()
+boyPhoto.src = "me.jpg"
+
+const girlPhoto = new Image()
+girlPhoto.src = "her.jpg"
+
+function drawBackground(){
+
+// sky
+ctx.fillStyle="#9fd4ff"
+ctx.fillRect(0,0,700,200)
+
+// hills
+ctx.fillStyle="#7ccf7c"
+ctx.beginPath()
+ctx.arc(150,220,120,0,Math.PI)
+ctx.arc(400,220,140,0,Math.PI)
+ctx.arc(650,220,120,0,Math.PI)
+ctx.fill()
+
+// ground
+ctx.fillStyle="#6b4c2b"
+ctx.fillRect(0,260,700,90)
+
+}
+
+function drawBoy(x,y){
+
+ctx.fillStyle="#b8743a"
+ctx.fillRect(x+6,y,20,6)
+
+ctx.fillStyle="#ffd7b5"
+ctx.fillRect(x+8,y+6,16,14)
+
+ctx.fillStyle="black"
+ctx.fillRect(x+12,y+12,2,2)
+ctx.fillRect(x+18,y+12,2,2)
+
+ctx.fillStyle="#e23b2e"
+ctx.fillRect(x+8,y+20,16,16)
+
+ctx.fillStyle="#3a6bff"
+ctx.fillRect(x+8,y+36,6,12)
+ctx.fillRect(x+18,y+36,6,12)
+
+}
+
+function drawGirl(x,y){
+
+ctx.fillStyle="#6a3ea0"
+ctx.fillRect(x+6,y,20,6)
+
+ctx.fillStyle="#ffd7b5"
+ctx.fillRect(x+8,y+6,16,14)
+
+ctx.fillStyle="black"
+ctx.fillRect(x+12,y+12,2,2)
+ctx.fillRect(x+18,y+12,2,2)
+
+ctx.fillStyle="#ff6ac1"
+ctx.fillRect(x+8,y+20,16,16)
+
+ctx.fillStyle="#222"
+ctx.fillRect(x+8,y+36,6,12)
+ctx.fillRect(x+18,y+36,6,12)
+
+}
+
+function drawChocolate(){
+
+if(!chocolate) return
+
+ctx.fillStyle="#4a2a0c"
+ctx.beginPath()
+ctx.arc(chocolate.x,chocolate.y,6,0,Math.PI*2)
+ctx.fill()
+
+}
+
+function drawTitle(){
+
+ctx.fillStyle="#222"
+ctx.font="20px monospace"
+ctx.fillText("Vane munchkin transaction hahaha",160,40)
+
+}
+
+// DRAW PHOTOS
+function drawPhotos(){
+
+if(boyPhoto.complete){
+ctx.drawImage(boyPhoto,boy.x-10,boy.y-50,40,40)
+}
+
+if(girlPhoto.complete){
+ctx.drawImage(girlPhoto,girl.x-10,girl.y-50,40,40)
+}
+
+}
+
+function update(){
+
+if(state==="walk"){
+
+boy.x+=0.6
+girl.x-=0.6
+
+if(Math.abs(boy.x-girl.x)<80){
+
+state="pass"
+
+chocolate={
+x:girl.x+16,
+y:girl.y+28
+}
+
+}
+
+}
+
+if(state==="pass"){
+
+chocolate.x-=2
+
+if(chocolate.x<=boy.x+20){
+
+chocolate=null
+state="done"
+
+}
+
+}
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,700,350)
+
+drawBackground()
+drawTitle()
+
+drawBoy(boy.x,boy.y)
+drawGirl(girl.x,girl.y)
+
+drawPhotos()
+
+drawChocolate()
+
+}
+
+function reset(){
+
+if(state==="done"){
+
+setTimeout(()=>{
+
+boy.x=150
+girl.x=550
+state="walk"
+
+},1500)
+
+}
+
+}
+
+function loop(){
+
+update()
+draw()
+reset()
+
+requestAnimationFrame(loop)
+
+}
+
+loop()
+
+</script>
+
+</body>
+</html>
+```
